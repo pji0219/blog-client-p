@@ -1,4 +1,4 @@
-import { CLEAR_ERROR_FAILURE, CLEAR_ERROR_REQUEST, CLEAR_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from '../types';
+import { CLEAR_ERROR_FAILURE, CLEAR_ERROR_REQUEST, CLEAR_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE } from '../types';
 
 const initialState = {
   token: localStorage.getItem('token'),
@@ -14,6 +14,7 @@ const initialState = {
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
+    case LOGOUT_REQUEST:
     case LOGIN_REQUEST:
       return {
         ...state,
@@ -34,6 +35,32 @@ const authReducer = (state = initialState, action) => {
       }
 
     case LOGIN_FAILURE:
+      localStorage.removeItem('token');
+      return {
+        ...state,
+        ...action.payload,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        user: null,
+        userId: null,
+        userRole: null,
+        errorMsg: action.payload.data.msg
+      }
+
+    case LOGOUT_SUCCESS:
+      localStorage.removeItem('token');
+      return {
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        user: null,
+        userId: null,
+        userRole: null,
+        errorMsg: ''
+      }
+
+    case LOGOUT_FAILURE:
       localStorage.removeItem('token');
       return {
         ...state,
